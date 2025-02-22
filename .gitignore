@@ -72,3 +72,9 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+KizokuNoKage/.vsconfig
+KizokuNoKage/Binaries/
+KizokuNoKage/Content/StarterContent/
+KizokuNoKage/Intermediate/
+KizokuNoKage/Saved/
+KizokuNoKage/UpgradeLog.htm
