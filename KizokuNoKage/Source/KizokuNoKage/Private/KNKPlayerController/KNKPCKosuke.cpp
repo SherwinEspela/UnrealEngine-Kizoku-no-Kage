@@ -34,18 +34,18 @@ void AKNKPCKosuke::Interact()
 
 void AKNKPCKosuke::Move(const FInputActionValue& Value)
 {
-	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging) return;
-
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
-	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	if (bIsLookingAwayFromWallWhileWallHugging) return;
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-	PlayerCharacter->AddMovementInput(ForwardDirection, MovementVector.Y);
 	PlayerCharacter->AddMovementInput(RightDirection, MovementVector.X);
+
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging) return;
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	PlayerCharacter->AddMovementInput(ForwardDirection, MovementVector.Y);
 }
 
 void AKNKPCKosuke::Look(const FInputActionValue& Value)

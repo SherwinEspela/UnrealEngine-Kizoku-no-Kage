@@ -20,6 +20,10 @@ class KIZOKUNOKAGE_API AKNKPCKosuke : public AKNKPCBase
 {
 	GENERATED_BODY()
 	
+public:
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetLookingAwayFromWallWhileWallHugging(bool Value) { bIsLookingAwayFromWallWhileWallHugging = Value; }
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -47,4 +51,5 @@ protected:
 
 private:
 	UEnhancedInputComponent* EnhancedInputComponent;
+	bool bIsLookingAwayFromWallWhileWallHugging = false;
 };
