@@ -23,7 +23,6 @@ void AKNKPCKosuke::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-	//EnhancedInputComponent->BindAction(InputActionInteract, ETriggerEvent::Triggered, this, &AKNKPCKosuke::Interact);
 	EnhancedInputComponent->BindAction(InputActionMove, ETriggerEvent::Triggered, this, &AKNKPCKosuke::Move);
 	EnhancedInputComponent->BindAction(InputActionLook, ETriggerEvent::Triggered, this, &AKNKPCKosuke::Look);
 }
@@ -35,6 +34,8 @@ void AKNKPCKosuke::Interact()
 
 void AKNKPCKosuke::Move(const FInputActionValue& Value)
 {
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging) return;
+
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	const FRotator Rotation = GetControlRotation();
