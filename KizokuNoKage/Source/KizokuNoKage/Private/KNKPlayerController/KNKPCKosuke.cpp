@@ -24,6 +24,7 @@ void AKNKPCKosuke::SetupInputComponent()
 
 	EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 	EnhancedInputComponent->BindAction(InputActionMove, ETriggerEvent::Triggered, this, &AKNKPCKosuke::Move);
+	EnhancedInputComponent->BindAction(InputActionMove, ETriggerEvent::Canceled, this, &AKNKPCKosuke::MoveStopped);
 	EnhancedInputComponent->BindAction(InputActionLook, ETriggerEvent::Triggered, this, &AKNKPCKosuke::Look);
 }
 
@@ -38,14 +39,27 @@ void AKNKPCKosuke::Move(const FInputActionValue& Value)
 
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
-
-	if (bIsLookingAwayFromWallWhileWallHugging) return;
-	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-	PlayerCharacter->AddMovementInput(RightDirection, MovementVector.X);
-
-	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging) return;
 	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	PlayerCharacter->AddMovementInput(ForwardDirection, MovementVector.Y);
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	//if (bIsLookingAwayFromWallWhileWallHugging) {}
+
+	//if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging) {
+	//	UE_LOG(LogTemp, Warning, TEXT("x value ===== %f"), MovementVector.X);
+	//	WallHugDirection = MovementVector.X;
+	//}
+	//else {
+	//	
+	//}
+
+	PlayerCharacter->AddMovementInput(RightDirection, MovementVector.X);
+	
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging) {
+		WallHugDirection = MovementVector.X;
+	}
+	else {
+		PlayerCharacter->AddMovementInput(ForwardDirection, MovementVector.Y);
+	}
 }
 
 void AKNKPCKosuke::Look(const FInputActionValue& Value)
@@ -53,4 +67,13 @@ void AKNKPCKosuke::Look(const FInputActionValue& Value)
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 	PlayerCharacter->AddControllerYawInput(LookAxisVector.X);
 	PlayerCharacter->AddControllerPitchInput(LookAxisVector.Y);
+}
+
+void AKNKPCKosuke::MoveStopped(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Move Stopped......"));
+
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging) {
+		WallHugDirection = 0.f;
+	}
 }

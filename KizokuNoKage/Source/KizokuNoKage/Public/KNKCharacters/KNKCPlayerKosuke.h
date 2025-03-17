@@ -7,6 +7,8 @@
 #include "Enums/EnumPlayerMovementStates.h"
 #include "KNKCPlayerKosuke.generated.h"
 
+class UArrowComponent;
+
 /**
  * 
  */
@@ -14,7 +16,9 @@ UCLASS()
 class KIZOKUNOKAGE_API AKNKCPlayerKosuke : public AKNKCharacterBase
 {
 	GENERATED_BODY()
-	
+public:
+	AKNKCPlayerKosuke();
+
 public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE EPlayerMovementStates GetPlayerMovementState() const { return PlayerMovementState; }
@@ -31,4 +35,7 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Player Movement States")
 	EPlayerMovementStates PlayerMovementState;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Arrow Wall Detector")
+	TObjectPtr<UArrowComponent> ArrowWallDetector;
 };

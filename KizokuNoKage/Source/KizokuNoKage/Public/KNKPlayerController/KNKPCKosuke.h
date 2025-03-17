@@ -24,6 +24,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void SetLookingAwayFromWallWhileWallHugging(bool Value) { bIsLookingAwayFromWallWhileWallHugging = Value; }
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE float GetWallHugDirection() const { return WallHugDirection; }
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -31,6 +34,7 @@ protected:
 	void Interact();
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void MoveStopped(const FInputActionValue& Value);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Player Character")
@@ -48,6 +52,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
 	UInputAction* InputActionLook;
+
+	float WallHugDirection = 0.f;
 
 private:
 	UEnhancedInputComponent* EnhancedInputComponent;
