@@ -27,8 +27,12 @@ protected:
 protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void Restart();
 
 protected:
+	UPROPERTY(BlueprintReadOnly, Category = "Player Character")
+	TObjectPtr<AKNKPlayer> PlayerCharacter;
+	
 	// Player Inputs
 	UPROPERTY(EditDefaultsOnly, Category = "Player Input")
 	UInputMappingContext* InputMappingContext;
@@ -39,7 +43,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
 	UInputAction* InputActionLook;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
+	UInputAction* InputActionRestart;
+
 private:
-	TObjectPtr<AKNKPlayer> PlayerCharacter;
 	UEnhancedInputComponent* EnhancedInputComponent;
 };

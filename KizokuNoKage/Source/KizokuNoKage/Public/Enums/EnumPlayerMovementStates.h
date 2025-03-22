@@ -6,6 +6,7 @@ UENUM(BlueprintType)
 enum class EPlayerMovementStates : uint8
 {
 	EPMS_Idling			UMETA(DisplayName = "Idling"),
+	EPMS_Moving			UMETA(DisplayName = "Moving"),
 	EPMS_Running		UMETA(DisplayName = "Running"),
 	EPMS_TakingCover	UMETA(DisplayName = "Taking Cover"),
 	EPMS_WallHugging	UMETA(DisplayName = "Wall Hugging"),

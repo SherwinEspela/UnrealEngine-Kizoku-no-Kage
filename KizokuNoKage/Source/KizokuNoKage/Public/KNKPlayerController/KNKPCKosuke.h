@@ -38,7 +38,7 @@ protected:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Player Character")
-	TObjectPtr<AKNKCPlayerKosuke> PlayerCharacter;	
+	TObjectPtr<AKNKCPlayerKosuke> PlayerCharacter;
 	
 	// Player Inputs
 	UPROPERTY(EditDefaultsOnly, Category = "Player Input")

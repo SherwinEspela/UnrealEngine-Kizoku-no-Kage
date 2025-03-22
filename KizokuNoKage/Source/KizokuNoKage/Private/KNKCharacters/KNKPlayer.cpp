@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/ArrowComponent.h"
 
 AKNKPlayer::AKNKPlayer()
 {
@@ -27,6 +28,9 @@ AKNKPlayer::AKNKPlayer()
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+
+	ArrowWallDetector = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow Wall Detector"));
+	ArrowWallDetector->SetupAttachment(GetMesh(), FName("root"));
 }
 
 void AKNKPlayer::BeginPlay()
