@@ -19,6 +19,12 @@ UCLASS()
 class KIZOKUNOKAGE_API AKNKPCGameplay : public AKNKPCBase
 {
 	GENERATED_BODY()
+public:
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetWallLeftEdgeReached(bool Value) { bIsWallLeftEdgeReached = Value; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetWallRightEdgeReached(bool Value) { bIsWallRightEdgeReached = Value; }
 	
 protected:
 	virtual void BeginPlay() override;
@@ -45,6 +51,22 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
 	UInputAction* InputActionRestart;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wall Hug Speed")
+	float MovementSpeedX;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wall Hug Speed")
+	float MovementSpeedY;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wall Hug Speed")
+	float WallHugMovementSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wall Edge")
+	bool bIsWallLeftEdgeReached = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wall Edge")
+	bool bIsWallRightEdgeReached = false;
 
 private:
 	UEnhancedInputComponent* EnhancedInputComponent;

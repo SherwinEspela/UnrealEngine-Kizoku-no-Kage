@@ -31,6 +31,12 @@ AKNKPlayer::AKNKPlayer()
 
 	ArrowWallDetector = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow Wall Detector"));
 	ArrowWallDetector->SetupAttachment(GetMesh(), FName("root"));
+
+	ArrowWallDetectorLeft = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow Wall Detector Left"));
+	ArrowWallDetectorLeft->SetupAttachment(GetMesh(), FName("root"));
+
+	ArrowWallDetectorRight = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow Wall Detector Right"));
+	ArrowWallDetectorRight->SetupAttachment(GetMesh(), FName("root"));
 }
 
 void AKNKPlayer::BeginPlay()

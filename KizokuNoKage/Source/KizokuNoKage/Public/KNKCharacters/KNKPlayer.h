@@ -43,4 +43,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Arrow Wall Detector")
 	TObjectPtr<UArrowComponent> ArrowWallDetector;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Arrow Wall Detector")
+	TObjectPtr<UArrowComponent> ArrowWallDetectorLeft;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Arrow Wall Detector")
+	TObjectPtr<UArrowComponent> ArrowWallDetectorRight;
 };

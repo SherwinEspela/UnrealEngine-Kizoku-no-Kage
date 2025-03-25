@@ -30,16 +30,33 @@ void AKNKPCGameplay::SetupInputComponent()
 
 void AKNKPCGameplay::Move(const FInputActionValue& Value)
 {
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_TakingCover) return;
+
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
 
-	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	if (PlayerCharacter->GetPlayerMovementState() != EPlayerMovementStates::EPMS_WallHugging)
+	{
+		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		PlayerCharacter->AddMovementInput(ForwardDirection, MovementVector.Y);
+	}
 
-	PlayerCharacter->AddMovementInput(ForwardDirection, MovementVector.Y);
-	PlayerCharacter->AddMovementInput(RightDirection, MovementVector.X);
+	float MovementVectorX = MovementVector.X;
+	UE_LOG(LogTemp, Warning, TEXT("Movement Vector X ==== %f"), MovementVector.X);
+	
+	if (bIsWallRightEdgeReached && MovementVectorX < 0.f)
+	{
+		MovementVectorX = 0.f;
+	}
+	else if (bIsWallLeftEdgeReached && MovementVectorX > 0.f)
+	{
+		MovementVectorX = 0.f;
+	}
+
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	PlayerCharacter->AddMovementInput(RightDirection, MovementVectorX);
 }
 
 void AKNKPCGameplay::Look(const FInputActionValue& Value)
