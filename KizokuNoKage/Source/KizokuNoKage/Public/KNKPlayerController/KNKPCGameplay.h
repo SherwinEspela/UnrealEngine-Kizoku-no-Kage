@@ -26,6 +26,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void SetWallRightEdgeReached(bool Value) { bIsWallRightEdgeReached = Value; }
 	
+public:
+	UFUNCTION(BlueprintCallable)
+	void HandleWallHugWalkStopAnimStarted();
+
+	UFUNCTION(BlueprintCallable)
+	void HandleWallHugWalkStopAnimCompleted();
+
+	UFUNCTION(BlueprintCallable)
+	void HandleWallHugWalkStoppedAtFacing(bool IsFacingLeft);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -33,6 +43,7 @@ protected:
 protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void WallPeek(const FInputActionValue& Value);
 	void Restart();
 
 protected:
@@ -52,6 +63,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
 	UInputAction* InputActionRestart;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
+	UInputAction* InputActionWallPeek;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wall Hug Speed")
 	float MovementSpeedX;
@@ -70,4 +84,6 @@ protected:
 
 private:
 	UEnhancedInputComponent* EnhancedInputComponent;
+	bool bCanWallPeek = false;
+	bool bIsWallHugFacingLeft = false;
 };
