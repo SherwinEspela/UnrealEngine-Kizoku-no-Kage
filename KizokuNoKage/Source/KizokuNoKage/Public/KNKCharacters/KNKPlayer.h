@@ -22,6 +22,16 @@ public:
 	AKNKPlayer();
 
 public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandlePlayerWallPeekRight();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandlePlayerWallPeekLeft();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandlePlayerWallPeekCancel();
+
+public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE EPlayerMovementStates GetPlayerMovementState() const { return PlayerMovementState; }
 
@@ -32,10 +42,10 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Camera Setup")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Setup")
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Camera Setup")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Setup")
 	TObjectPtr<UCameraComponent> FollowCamera;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Player Movement States")

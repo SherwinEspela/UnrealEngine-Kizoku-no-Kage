@@ -26,11 +26,12 @@ void AKNKPCGameplay::SetupInputComponent()
 	EnhancedInputComponent->BindAction(InputActionMove, ETriggerEvent::Triggered, this, &AKNKPCGameplay::Move);
 	EnhancedInputComponent->BindAction(InputActionLook, ETriggerEvent::Triggered, this, &AKNKPCGameplay::Look);
 	EnhancedInputComponent->BindAction(InputActionRestart, ETriggerEvent::Triggered, this, &AKNKPCGameplay::Restart);
-	//EnhancedInputComponent->BindAction(InputActionWallPeek, ETriggerEvent::Triggered, this, &AKNKPCGameplay::WallPeek);
+	EnhancedInputComponent->BindAction(InputActionWallPeek, ETriggerEvent::Triggered, this, &AKNKPCGameplay::WallPeek);
 }
 
 void AKNKPCGameplay::Move(const FInputActionValue& Value)
 {
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallPeeking) return;
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_TakingCover) return;
 
 	const FVector2D MovementVector = Value.Get<FVector2D>();
@@ -52,24 +53,6 @@ void AKNKPCGameplay::Move(const FInputActionValue& Value)
 		MovementY = 0.f;
 	}
 
-	/*if (MovementX > 0.f)
-	{
-		MovementX = 1.f;
-	}
-	else if (MovementX < 0.f)
-	{
-		MovementX = -1.f;
-	}
-
-	if (MovementY > 0.f)
-	{
-		MovementY = 1.f;
-	}
-	else if (MovementY < 0.f)
-	{
-		MovementY = -1.f;
-	}*/
-
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 	PlayerCharacter->AddMovementInput(RightDirection, MovementX);
 
@@ -87,46 +70,42 @@ void AKNKPCGameplay::Look(const FInputActionValue& Value)
 void AKNKPCGameplay::WallPeek(const FInputActionValue& Value)
 {
 	if (!bCanWallPeek) return;
-	if (PlayerCharacter->GetPlayerMovementState() != EPlayerMovementStates::EPMS_WallHugging) return;
+	if (!(bIsWallRightEdgeReached || bIsWallLeftEdgeReached)) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging || 
+		PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallPeeking) {
+		
+		const FVector2D MovementVector = Value.Get<FVector2D>();
+		float MovementX = MovementVector.X;
 
-	const FVector2D MovementVector = Value.Get<FVector2D>();
-	float MovementVectorX = MovementVector.X;
-	float MovementVectorY = MovementVector.Y;
-
-	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallPeeking)
-	{
-
-	}
-	else {
-		if (bIsWallRightEdgeReached)
+		if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallPeeking)
 		{
-			if (!bIsWallHugFacingLeft)
+			if (bIsWallRightEdgeReached && !bIsWallHugFacingLeft && MovementX > 0.f)
 			{
 				// facing right
-				UE_LOG(LogTemp, Warning, TEXT("Wall Peek Right......"));
-				PlayerCharacter->SetPlayerMovementState(EPlayerMovementStates::EPMS_WallPeeking);
-			}
-			else {
-				UE_LOG(LogTemp, Warning, TEXT("Wall Peek cancelled......"));
-				PlayerCharacter->SetPlayerMovementState(EPlayerMovementStates::EPMS_WallHugging);
+				PlayerCharacter->HandlePlayerWallPeekCancel();
 				bCanWallPeek = false;
-				bIsWallLeftEdgeReached = false;
-				bIsWallRightEdgeReached = false;
+			}
+			else if (bIsWallLeftEdgeReached && bIsWallHugFacingLeft && MovementX < 0.f)
+			{
+				// facing left
+				PlayerCharacter->HandlePlayerWallPeekCancel();
+				bCanWallPeek = false;
 			}
 		}
-		else if (bIsWallLeftEdgeReached)
-		{
-			if (bIsWallHugFacingLeft)
+		else {
+			if (bIsWallRightEdgeReached && !bIsWallHugFacingLeft && MovementX < 0.f)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Wall Peek Left......"));
+				// facing right
 				PlayerCharacter->SetPlayerMovementState(EPlayerMovementStates::EPMS_WallPeeking);
-			}
-			else {
-				UE_LOG(LogTemp, Warning, TEXT("Wall Peek cancelled......"));
-				PlayerCharacter->SetPlayerMovementState(EPlayerMovementStates::EPMS_WallHugging);
+				PlayerCharacter->HandlePlayerWallPeekRight();
 				bCanWallPeek = false;
-				bIsWallLeftEdgeReached = false;
-				bIsWallRightEdgeReached = false;
+			}
+			else if (bIsWallLeftEdgeReached && bIsWallHugFacingLeft && MovementX > 0.f)
+			{
+				// facing left
+				PlayerCharacter->SetPlayerMovementState(EPlayerMovementStates::EPMS_WallPeeking);
+				PlayerCharacter->HandlePlayerWallPeekLeft();
+				bCanWallPeek = false;
 			}
 		}
 	}
@@ -143,6 +122,17 @@ void AKNKPCGameplay::HandleWallHugWalkStopAnimStarted()
 }
 
 void AKNKPCGameplay::HandleWallHugWalkStopAnimCompleted()
+{
+	bCanWallPeek = true;
+}
+
+void AKNKPCGameplay::HandlePeekToWallHugIdleCompleted()
+{
+	bCanWallPeek = true;
+	PlayerCharacter->SetPlayerMovementState(EPlayerMovementStates::EPMS_WallHugging);
+}
+
+void AKNKPCGameplay::HandleWallPeekAnimCompleted()
 {
 	bCanWallPeek = true;
 }

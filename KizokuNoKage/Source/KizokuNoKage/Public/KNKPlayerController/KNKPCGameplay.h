@@ -34,6 +34,12 @@ public:
 	void HandleWallHugWalkStopAnimCompleted();
 
 	UFUNCTION(BlueprintCallable)
+	void HandlePeekToWallHugIdleCompleted();
+
+	UFUNCTION(BlueprintCallable)
+	void HandleWallPeekAnimCompleted();
+
+	UFUNCTION(BlueprintCallable)
 	void HandleWallHugWalkStoppedAtFacing(bool IsFacingLeft);
 
 protected:
