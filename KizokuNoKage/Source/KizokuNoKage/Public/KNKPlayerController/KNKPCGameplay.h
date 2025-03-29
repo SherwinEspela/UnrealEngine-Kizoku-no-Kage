@@ -10,6 +10,8 @@ class AKNKPlayer;
 class UInputMappingContext;
 class UInputAction;
 class UEnhancedInputComponent;
+class UKNKAnimInstancePlayer;
+class UCharacterMovementComponent;
 struct FInputActionValue;
 
 /**
@@ -27,6 +29,8 @@ public:
 	FORCEINLINE void SetWallRightEdgeReached(bool Value) { bIsWallRightEdgeReached = Value; }
 	
 public:
+	// Called in Blueprints
+
 	UFUNCTION(BlueprintCallable)
 	void HandleWallHugWalkStopAnimStarted();
 
@@ -42,6 +46,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HandleWallHugWalkStoppedAtFacing(bool IsFacingLeft);
 
+	UFUNCTION(BlueprintCallable)
+	void HandleCrouchTransitionCompleted();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -51,11 +58,19 @@ protected:
 	void Look(const FInputActionValue& Value);
 	void WallPeek(const FInputActionValue& Value);
 	void Restart();
+	void ToggleCrouch();
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Player Character")
 	TObjectPtr<AKNKPlayer> PlayerCharacter;
-	
+
+	UPROPERTY(BlueprintReadOnly, Category = "Player Anim Instance")
+	TObjectPtr<UKNKAnimInstancePlayer> PlayerAnimInstance;
+
+	UPROPERTY(BlueprintReadOnly, Category = Movement)
+	UCharacterMovementComponent* MovementComponent;
+
+protected:
 	// Player Inputs
 	UPROPERTY(EditDefaultsOnly, Category = "Player Input")
 	UInputMappingContext* InputMappingContext;
@@ -71,6 +86,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
 	UInputAction* InputActionWallPeek;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
+	UInputAction* InputActionCrouch;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wall Hug Speed")
@@ -88,8 +106,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wall Edge")
 	bool bIsWallRightEdgeReached = false;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Max Run Speed")
+	float MaxRunSpeed = 500.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Max Run Speed")
+	float MaxCrouchSpeed = 100.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Max Run Speed")
+	float MaxWallHugWalkSpeed = 200.f;
+
 private:
 	UEnhancedInputComponent* EnhancedInputComponent;
 	bool bCanWallPeek = false;
 	bool bIsWallHugFacingLeft = false;
+	bool bIsCrouchTransitioning = false;
 };

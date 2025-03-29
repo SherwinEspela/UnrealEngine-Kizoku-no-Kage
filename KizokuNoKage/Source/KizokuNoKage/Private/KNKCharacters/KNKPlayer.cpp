@@ -43,4 +43,5 @@ void AKNKPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	PlayerMovementState = EPlayerMovementStates::EPMS_Idling;
 }

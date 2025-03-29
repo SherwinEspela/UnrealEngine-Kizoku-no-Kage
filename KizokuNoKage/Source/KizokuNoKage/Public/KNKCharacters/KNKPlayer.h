@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "KNKCharacters/KNKCharacterBase.h"
 #include "Enums/EnumPlayerMovementStates.h"
+#include "Enums/EnumStances.h"
 #include "KNKPlayer.generated.h"
 
 class USpringArmComponent;
@@ -38,8 +39,22 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void SetPlayerMovementState(EPlayerMovementStates Value) { PlayerMovementState = Value; }
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE ECharacterStances GetPlayerStance() const { return PlayerStance; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetPlayerStance(ECharacterStances Value) { PlayerStance = Value; }
+
 protected:
 	virtual void BeginPlay() override;
+
+protected:
+	// Player States
+	UPROPERTY(BlueprintReadWrite, Category = "Player Movement States")
+	EPlayerMovementStates PlayerMovementState = EPlayerMovementStates::EPMS_Default;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Player Movement States")
+	ECharacterStances PlayerStance = ECharacterStances::ECS_Stand;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Setup")
@@ -47,9 +62,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera Setup")
 	TObjectPtr<UCameraComponent> FollowCamera;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Player Movement States")
-	EPlayerMovementStates PlayerMovementState = EPlayerMovementStates::EPMS_Default;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Arrow Wall Detector")
 	TObjectPtr<UArrowComponent> ArrowWallDetector;
