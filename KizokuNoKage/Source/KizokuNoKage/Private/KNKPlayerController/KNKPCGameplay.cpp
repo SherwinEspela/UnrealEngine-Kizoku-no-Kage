@@ -36,12 +36,16 @@ void AKNKPCGameplay::SetupInputComponent()
 	EnhancedInputComponent->BindAction(InputActionRestart, ETriggerEvent::Triggered, this, &AKNKPCGameplay::Restart);
 	EnhancedInputComponent->BindAction(InputActionWallPeek, ETriggerEvent::Triggered, this, &AKNKPCGameplay::WallPeek);
 	EnhancedInputComponent->BindAction(InputActionCrouch, ETriggerEvent::Triggered, this, &AKNKPCGameplay::ToggleCrouch);
+	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Started, this, &AKNKPCGameplay::CrouchHold);
+	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Triggered, this, &AKNKPCGameplay::CrouchRelease);
+	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Canceled, this, &AKNKPCGameplay::CrouchRelease);
 }
 
 void AKNKPCGameplay::Move(const FInputActionValue& Value)
 {
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallPeeking) return;
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_TakingCover) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_UnHuggingWall) return;
 	if (bIsCrouchTransitioning) return;
 
 	const FVector2D MovementVector = Value.Get<FVector2D>();
@@ -72,6 +76,8 @@ void AKNKPCGameplay::Move(const FInputActionValue& Value)
 
 void AKNKPCGameplay::Look(const FInputActionValue& Value)
 {
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_UnHuggingWall) return;
+
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 	PlayerCharacter->AddControllerYawInput(LookAxisVector.X);
 	PlayerCharacter->AddControllerPitchInput(LookAxisVector.Y);
@@ -143,10 +149,19 @@ void AKNKPCGameplay::ToggleCrouch()
 		{
 			case EPlayerMovementStates::EPMS_Idling:
 			PlayerAnimInstance->PlayIdleStandToCrouchAnimation();
+			MovementComponent->MaxWalkSpeed = MaxCrouchSpeed;
+			MovementComponent->MinAnalogWalkSpeed = MaxCrouchSpeed;
 			break;
+
+			case EPlayerMovementStates::EPMS_Moving:
+				MovementComponent->MaxWalkSpeed = MaxCrouchSpeed;
+				MovementComponent->MinAnalogWalkSpeed = MaxCrouchSpeed;
+				break;
 
 			case EPlayerMovementStates::EPMS_WallHugging:
 			PlayerAnimInstance->PlayWallHugStandToCrouch();
+			MovementComponent->MaxWalkSpeed = MaxWallHugWalkSpeed;
+			MovementComponent->MinAnalogWalkSpeed = MaxWallHugWalkSpeed;
 			break;
 
 			default:
@@ -155,38 +170,104 @@ void AKNKPCGameplay::ToggleCrouch()
 	}
 	else if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_Crouch) {
 		PlayerAnimInstance->SetPlayerStance(ECharacterStances::ECS_Stand);
-		MovementComponent->MaxWalkSpeed = MaxRunSpeed;
-		MovementComponent->MinAnalogWalkSpeed = MaxRunSpeed;
-
+		
 		switch (PlayerCharacter->GetPlayerMovementState())
 		{
 		case EPlayerMovementStates::EPMS_Idling:
+			MovementComponent->MaxWalkSpeed = MaxRunSpeed;
+			MovementComponent->MinAnalogWalkSpeed = MaxRunSpeed;
 			PlayerAnimInstance->PlayIdleCrouchToStand();
+			break;
+
+		case EPlayerMovementStates::EPMS_Moving:
+			MovementComponent->MaxWalkSpeed = MaxRunSpeed;
+			MovementComponent->MinAnalogWalkSpeed = MaxRunSpeed;
 			break;
 
 		case EPlayerMovementStates::EPMS_WallHugging:
 			PlayerAnimInstance->PlayWallHugCrouchToStand();
+			MovementComponent->MaxWalkSpeed = MaxWallHugWalkSpeed;
+			MovementComponent->MinAnalogWalkSpeed = MaxWallHugWalkSpeed;
 			break;
 
 		default:
 			break;
 		}
 	}
+}
 
-	switch (PlayerCharacter->GetPlayerMovementState())
+void AKNKPCGameplay::CrouchHold()
+{
+	if (bIsCrouchTransitioning) return;
+
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Idling)
 	{
-	case EPlayerMovementStates::EPMS_Idling:
-		MovementComponent->MaxWalkSpeed = MaxCrouchSpeed;
-		MovementComponent->MinAnalogWalkSpeed = MaxCrouchSpeed;
-		break;
+		bIsCrouchTransitioning = true;
+	}
 
-	case EPlayerMovementStates::EPMS_WallHugging:
-		MovementComponent->MaxWalkSpeed = MaxWallHugWalkSpeed;
-		MovementComponent->MinAnalogWalkSpeed = MaxWallHugWalkSpeed;
-		break;
+	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_Stand)
+	{
+		PlayerAnimInstance->SetPlayerStance(ECharacterStances::ECS_Crouch);
 
-	default:
-		break;
+		switch (PlayerCharacter->GetPlayerMovementState())
+		{
+		case EPlayerMovementStates::EPMS_Idling:
+			PlayerAnimInstance->PlayIdleStandToCrouchAnimation();
+			MovementComponent->MaxWalkSpeed = MaxCrouchSpeed;
+			MovementComponent->MinAnalogWalkSpeed = MaxCrouchSpeed;
+			break;
+
+		case EPlayerMovementStates::EPMS_Moving:
+			MovementComponent->MaxWalkSpeed = MaxCrouchSpeed;
+			MovementComponent->MinAnalogWalkSpeed = MaxCrouchSpeed;
+			break;
+
+		case EPlayerMovementStates::EPMS_WallHugging:
+			PlayerAnimInstance->PlayWallHugStandToCrouch();
+			MovementComponent->MaxWalkSpeed = MaxWallHugWalkSpeed;
+			MovementComponent->MinAnalogWalkSpeed = MaxWallHugWalkSpeed;
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+void AKNKPCGameplay::CrouchRelease()
+{
+	if (bIsCrouchTransitioning) return;
+
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Idling)
+	{
+		bIsCrouchTransitioning = true;
+	}
+
+	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_Crouch) {
+		PlayerAnimInstance->SetPlayerStance(ECharacterStances::ECS_Stand);
+
+		switch (PlayerCharacter->GetPlayerMovementState())
+		{
+		case EPlayerMovementStates::EPMS_Idling:
+			MovementComponent->MaxWalkSpeed = MaxRunSpeed;
+			MovementComponent->MinAnalogWalkSpeed = MaxRunSpeed;
+			PlayerAnimInstance->PlayIdleCrouchToStand();
+			break;
+
+		case EPlayerMovementStates::EPMS_Moving:
+			MovementComponent->MaxWalkSpeed = MaxRunSpeed;
+			MovementComponent->MinAnalogWalkSpeed = MaxRunSpeed;
+			break;
+
+		case EPlayerMovementStates::EPMS_WallHugging:
+			PlayerAnimInstance->PlayWallHugCrouchToStand();
+			MovementComponent->MaxWalkSpeed = MaxWallHugWalkSpeed;
+			MovementComponent->MinAnalogWalkSpeed = MaxWallHugWalkSpeed;
+			break;
+
+		default:
+			break;
+		}
 	}
 }
 
