@@ -58,7 +58,7 @@ protected:
 	void Look(const FInputActionValue& Value);
 	void WallPeek(const FInputActionValue& Value);
 	void Restart();
-	void ToggleCrouch();
+	//void ToggleCrouch();
 	void CrouchHold();
 	void CrouchRelease();
 
