@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animations/KNKAnimInstanceBase.h"
+#include "Enums/EnumPlayerMovementStates.h"
 #include "Enums/EnumStances.h"
 #include "KNKAnimInstancePlayer.generated.h"
 
@@ -27,6 +28,7 @@ public:
 	void PlayIdleCrouchToStand();
 	void PlayWallHugStandToCrouch();
 	void PlayWallHugCrouchToStand();
+	void PlayWallPeekCancel();
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -40,10 +42,16 @@ protected:
 	TObjectPtr<AKNKCPlayerKosuke> PlayerCharacter;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Player Movement States")
+	EPlayerMovementStates PlayerMovementState;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Player Movement States")
 	ECharacterStances PlayerStance = ECharacterStances::ECS_Stand;
 
 protected:
 	// Montages
 	UPROPERTY(EditDefaultsOnly, Category = Montage)
 	UAnimMontage* MontageCrouch;
+
+	UPROPERTY(EditDefaultsOnly, Category = Montage)
+	UAnimMontage* MontageTakeCover;
 };

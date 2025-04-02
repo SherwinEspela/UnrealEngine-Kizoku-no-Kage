@@ -10,6 +10,7 @@ void UKNKAnimInstancePlayer::NativeInitializeAnimation()
 
 	PlayerCharacter = Cast<AKNKCPlayerKosuke>(TryGetPawnOwner());
 	PlayerStance = ECharacterStances::ECS_Stand;
+	PlayerMovementState = EPlayerMovementStates::EPMS_Idling;
 }
 
 void UKNKAnimInstancePlayer::PlayIdleStandToCrouchAnimation()
@@ -37,5 +38,16 @@ void UKNKAnimInstancePlayer::PlayWallHugCrouchToStand()
 {
 	if (!MontageCrouch) return;
 	Montage_Play(MontageCrouch);
-	Montage_JumpToSection("WallHugCrouchToStand");
+	Montage_JumpToSection(FName("WallHugCrouchToStand"), MontageCrouch);
+}
+
+void UKNKAnimInstancePlayer::PlayWallPeekCancel()
+{
+	if (!MontageTakeCover) return;
+
+	//UE_LOG(LogTemp, Warning, TEXT("UKNKAnimInstancePlayer::PlayWallPeekCancel"));
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, TEXT("UKNKAnimInstancePlayer::PlayWallPeekCancel"));
+
+	Montage_Play(MontageTakeCover);
+	Montage_JumpToSection(FName("WallpeekCancelLeft"), MontageTakeCover);
 }

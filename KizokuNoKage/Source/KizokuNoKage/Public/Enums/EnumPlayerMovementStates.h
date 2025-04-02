@@ -12,8 +12,17 @@ enum class EPlayerMovementStates : uint8
 	EPMS_WallHugging	UMETA(DisplayName = "Wall Hugging"),
 	EPMS_WallPeeking	UMETA(DisplayName = "Wall Peeking"),
 	EPMS_UnHuggingWall	UMETA(DisplayName = "UnHugging Wall"),
+	EPMS_UnpeekingWall	UMETA(DisplayName = "Unpeek Wall"),
 	EPMS_Jumping		UMETA(DisplayName = "Jumping"),
 	EPMS_Climbing		UMETA(DisplayName = "Climbing"),
 	EPMS_Crouching		UMETA(DisplayName = "Crouching"),
 	EPMS_Default		UMETA(DisplayName = "Default")
 };
+
+FORCEINLINE void PrintPlayerMovementState(EPlayerMovementStates Value) {
+	UE_LOG(LogTemp, Log, TEXT("Player Movement State: %s"), *UEnum::GetValueAsName(Value).ToString());
+}
+
+FORCEINLINE FString DebugGetPlayerMovementState(EPlayerMovementStates Value) {
+	return UEnum::GetValueAsName(Value).ToString();
+}

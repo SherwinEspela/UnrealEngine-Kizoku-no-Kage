@@ -35,7 +35,6 @@ void AKNKPCGameplay::SetupInputComponent()
 	EnhancedInputComponent->BindAction(InputActionLook, ETriggerEvent::Triggered, this, &AKNKPCGameplay::Look);
 	EnhancedInputComponent->BindAction(InputActionRestart, ETriggerEvent::Triggered, this, &AKNKPCGameplay::Restart);
 	EnhancedInputComponent->BindAction(InputActionWallPeek, ETriggerEvent::Triggered, this, &AKNKPCGameplay::WallPeek);
-	//EnhancedInputComponent->BindAction(InputActionCrouch, ETriggerEvent::Triggered, this, &AKNKPCGameplay::ToggleCrouch);
 	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Started, this, &AKNKPCGameplay::CrouchHold);
 	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Triggered, this, &AKNKPCGameplay::CrouchRelease);
 	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Canceled, this, &AKNKPCGameplay::CrouchRelease);
@@ -45,7 +44,7 @@ void AKNKPCGameplay::Move(const FInputActionValue& Value)
 {
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallPeeking) return;
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_TakingCover) return;
-	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_UnHuggingWall) return;
+
 	if (bIsCrouchTransitioning) return;
 
 	const FVector2D MovementVector = Value.Get<FVector2D>();
@@ -100,12 +99,16 @@ void AKNKPCGameplay::WallPeek(const FInputActionValue& Value)
 				// facing right
 				PlayerCharacter->HandlePlayerWallPeekCancel();
 				bCanWallPeek = false;
+				bIsWallRightEdgeReached = false;
+				bIsWallLeftEdgeReached = false;
 			}
 			else if (bIsWallLeftEdgeReached && bIsWallHugFacingLeft && MovementX < 0.f)
 			{
 				// facing left
 				PlayerCharacter->HandlePlayerWallPeekCancel();
 				bCanWallPeek = false;
+				bIsWallRightEdgeReached = false;
+				bIsWallLeftEdgeReached = false;
 			}
 		}
 		else {
@@ -198,7 +201,6 @@ void AKNKPCGameplay::Restart()
 
 void AKNKPCGameplay::CrouchHold()
 {
-	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_TakingCover) return;
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging) return;
 
 	if (bIsCrouchTransitioning) return;
@@ -206,8 +208,6 @@ void AKNKPCGameplay::CrouchHold()
 	{
 		bIsCrouchTransitioning = true;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("AKNKPCGameplay::CrouchHold......."));
 
 	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_Stand)
 	{
@@ -226,13 +226,6 @@ void AKNKPCGameplay::CrouchHold()
 			MovementComponent->MinAnalogWalkSpeed = MaxCrouchSpeed;
 			break;
 
-			// TODO: re-add when crouching is supported when wall hugging
-	/*	case EPlayerMovementStates::EPMS_WallHugging:
-			PlayerAnimInstance->PlayWallHugStandToCrouch();
-			MovementComponent->MaxWalkSpeed = MaxWallHugWalkSpeed;
-			MovementComponent->MinAnalogWalkSpeed = MaxWallHugWalkSpeed;
-			break;*/
-
 		default:
 			break;
 		}
@@ -240,7 +233,21 @@ void AKNKPCGameplay::CrouchHold()
 }
 
 void AKNKPCGameplay::CrouchRelease()
-{
+{	
+	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("AKNKPCGameplay::CrouchRelease...."));
+	bIsWallRightEdgeReached = false;
+	bIsWallLeftEdgeReached = false;
+
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallPeeking)
+	{
+		PlayerCharacter->SetPlayerMovementState(EPlayerMovementStates::EPMS_UnpeekingWall);
+		PlayerAnimInstance->PlayWallPeekCancel();
+		PlayerCharacter->HandlePlayerWallPeekCancel();
+		MovementComponent->MaxWalkSpeed = MaxRunSpeed;
+		MovementComponent->MinAnalogWalkSpeed = MaxRunSpeed;
+		return;
+	}
+
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging) return;
 	if (bIsCrouchTransitioning) return;
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Idling)
@@ -263,13 +270,6 @@ void AKNKPCGameplay::CrouchRelease()
 			MovementComponent->MaxWalkSpeed = MaxRunSpeed;
 			MovementComponent->MinAnalogWalkSpeed = MaxRunSpeed;
 			break;
-
-			// TODO: re-add when crouching is supported when wall hugging
-		//case EPlayerMovementStates::EPMS_WallHugging:
-		//	PlayerAnimInstance->PlayWallHugCrouchToStand();
-		//	MovementComponent->MaxWalkSpeed = MaxWallHugWalkSpeed;
-		//	MovementComponent->MinAnalogWalkSpeed = MaxWallHugWalkSpeed;
-		//	break;
 
 		default:
 			break;
