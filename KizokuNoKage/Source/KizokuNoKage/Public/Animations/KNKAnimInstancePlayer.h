@@ -28,7 +28,7 @@ public:
 	void PlayIdleCrouchToStand();
 	void PlayWallHugStandToCrouch();
 	void PlayWallHugCrouchToStand();
-	void PlayWallPeekCancel();
+	void PlayWallPeekCancel(bool IsFacingLeft);
 
 public:
 	UFUNCTION(BlueprintCallable)

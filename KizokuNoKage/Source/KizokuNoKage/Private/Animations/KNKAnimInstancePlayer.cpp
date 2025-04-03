@@ -41,13 +41,11 @@ void UKNKAnimInstancePlayer::PlayWallHugCrouchToStand()
 	Montage_JumpToSection(FName("WallHugCrouchToStand"), MontageCrouch);
 }
 
-void UKNKAnimInstancePlayer::PlayWallPeekCancel()
+void UKNKAnimInstancePlayer::PlayWallPeekCancel(bool IsFacingLeft)
 {
 	if (!MontageTakeCover) return;
 
-	//UE_LOG(LogTemp, Warning, TEXT("UKNKAnimInstancePlayer::PlayWallPeekCancel"));
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, TEXT("UKNKAnimInstancePlayer::PlayWallPeekCancel"));
-
+	FName SectionName = IsFacingLeft ? FName("WallpeekCancelLeft") : FName("WallpeekCancelRight");
 	Montage_Play(MontageTakeCover);
-	Montage_JumpToSection(FName("WallpeekCancelLeft"), MontageTakeCover);
+	Montage_JumpToSection(SectionName, MontageTakeCover);
 }

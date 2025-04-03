@@ -241,7 +241,7 @@ void AKNKPCGameplay::CrouchRelease()
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallPeeking)
 	{
 		PlayerCharacter->SetPlayerMovementState(EPlayerMovementStates::EPMS_UnpeekingWall);
-		PlayerAnimInstance->PlayWallPeekCancel();
+		PlayerAnimInstance->PlayWallPeekCancel(bIsWallHugFacingLeft);
 		PlayerCharacter->HandlePlayerWallPeekCancel();
 		MovementComponent->MaxWalkSpeed = MaxRunSpeed;
 		MovementComponent->MinAnalogWalkSpeed = MaxRunSpeed;
