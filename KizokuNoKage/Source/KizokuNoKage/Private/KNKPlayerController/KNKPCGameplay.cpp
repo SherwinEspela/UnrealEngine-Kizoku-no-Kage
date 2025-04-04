@@ -84,11 +84,13 @@ void AKNKPCGameplay::Look(const FInputActionValue& Value)
 
 void AKNKPCGameplay::WallPeek(const FInputActionValue& Value)
 {
-	if (!bCanWallPeek) return;
 	if (!(bIsWallRightEdgeReached || bIsWallLeftEdgeReached)) return;
-	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging || 
+
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging ||
 		PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallPeeking) {
+
 		
+
 		const FVector2D MovementVector = Value.Get<FVector2D>();
 		float MovementX = MovementVector.X;
 
@@ -96,17 +98,21 @@ void AKNKPCGameplay::WallPeek(const FInputActionValue& Value)
 		{
 			if (bIsWallRightEdgeReached && !bIsWallHugFacingLeft && MovementX > 0.f)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("AKNKPCGameplay::Facing Right...."));
+
 				// facing right
 				PlayerCharacter->HandlePlayerWallPeekCancel();
-				bCanWallPeek = false;
+				//bCanWallPeek = false;
 				bIsWallRightEdgeReached = false;
 				bIsWallLeftEdgeReached = false;
 			}
 			else if (bIsWallLeftEdgeReached && bIsWallHugFacingLeft && MovementX < 0.f)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("AKNKPCGameplay::Facing Left...."));
+
 				// facing left
 				PlayerCharacter->HandlePlayerWallPeekCancel();
-				bCanWallPeek = false;
+				//bCanWallPeek = false;
 				bIsWallRightEdgeReached = false;
 				bIsWallLeftEdgeReached = false;
 			}
@@ -117,14 +123,14 @@ void AKNKPCGameplay::WallPeek(const FInputActionValue& Value)
 				// facing right
 				PlayerCharacter->SetPlayerMovementState(EPlayerMovementStates::EPMS_WallPeeking);
 				PlayerCharacter->HandlePlayerWallPeekRight();
-				bCanWallPeek = false;
+				//bCanWallPeek = false;
 			}
 			else if (bIsWallLeftEdgeReached && bIsWallHugFacingLeft && MovementX > 0.f)
 			{
 				// facing left
 				PlayerCharacter->SetPlayerMovementState(EPlayerMovementStates::EPMS_WallPeeking);
 				PlayerCharacter->HandlePlayerWallPeekLeft();
-				bCanWallPeek = false;
+				//bCanWallPeek = false;
 			}
 		}
 	}
@@ -284,12 +290,12 @@ void AKNKPCGameplay::HandleWallHugWalkStopAnimStarted()
 
 void AKNKPCGameplay::HandleWallHugWalkStopAnimCompleted()
 {
-	bCanWallPeek = true;
+	//bCanWallPeek = true;
 }
 
 void AKNKPCGameplay::HandlePeekToWallHugIdleCompleted()
 {
-	bCanWallPeek = true;
+	//bCanWallPeek = true;
 	PlayerCharacter->SetPlayerMovementState(EPlayerMovementStates::EPMS_WallHugging);
 }
 
@@ -306,4 +312,11 @@ void AKNKPCGameplay::HandleWallHugWalkStoppedAtFacing(bool IsFacingLeft)
 void AKNKPCGameplay::HandleCrouchTransitionCompleted()
 {
 	bIsCrouchTransitioning = false;
+}
+
+void AKNKPCGameplay::HandleAdjustTakeCoverPosition(bool IsLeftSideWall)
+{
+	bIsWallHugFacingLeft = IsLeftSideWall;
+	bIsWallRightEdgeReached = !IsLeftSideWall;
+	bIsWallLeftEdgeReached = IsLeftSideWall;
 }

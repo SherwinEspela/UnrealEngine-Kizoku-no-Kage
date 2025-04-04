@@ -49,6 +49,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HandleCrouchTransitionCompleted();
 
+	// Called in WallHug Component Blueprint
+	UFUNCTION(BlueprintCallable)
+	void HandleAdjustTakeCoverPosition(bool IsLeftSideWall);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -105,10 +109,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wall Hug Speed")
 	float WallHugMovementSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wall Edge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wall Edge")
 	bool bIsWallLeftEdgeReached = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wall Edge")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wall Edge")
 	bool bIsWallRightEdgeReached = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Max Run Speed")
@@ -120,9 +124,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Max Run Speed")
 	float MaxWallHugWalkSpeed = 200.f;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Wall Hug Facing")
+	bool bIsWallHugFacingLeft = false;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Can Wall Peek")
+	bool bCanWallPeek = false;
+
 private:
 	UEnhancedInputComponent* EnhancedInputComponent;
-	bool bCanWallPeek = false;
-	bool bIsWallHugFacingLeft = false;
 	bool bIsCrouchTransitioning = false;
 };
