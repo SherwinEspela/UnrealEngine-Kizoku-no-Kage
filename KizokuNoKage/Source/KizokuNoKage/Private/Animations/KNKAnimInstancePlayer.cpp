@@ -2,15 +2,35 @@
 
 
 #include "Animations/KNKAnimInstancePlayer.h"
-#include "KNKCharacters/KNKCPlayerKosuke.h"
+//#include "KNKCharacters/KNKCPlayerKosuke.h"
+#include "KNKCharacters/KNKPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UKNKAnimInstancePlayer::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	PlayerCharacter = Cast<AKNKCPlayerKosuke>(TryGetPawnOwner());
+	PlayerCharacter = Cast<AKNKPlayer>(TryGetPawnOwner());
 	PlayerStance = ECharacterStances::ECS_Stand;
 	PlayerMovementState = EPlayerMovementStates::EPMS_Idling;
+
+	UE_LOG(LogTemp, Warning, TEXT("UKNKAnimInstancePlayer::NativeInitializeAnimation...."));
+
+	if (PlayerCharacter)
+	{
+		CharacterMovementComp = PlayerCharacter->GetCharacterMovement();
+	}
+}
+
+void UKNKAnimInstancePlayer::NativeUpdateAnimation(float DeltaSeconds)
+{
+	Super::NativeUpdateAnimation(DeltaSeconds);
+
+	if (CharacterMovementComp)
+	{
+		MovementSpeed2D = UKismetMathLibrary::VSizeXY(CharacterMovementComp->Velocity);
+	}
 }
 
 void UKNKAnimInstancePlayer::PlayIdleStandToCrouchAnimation()

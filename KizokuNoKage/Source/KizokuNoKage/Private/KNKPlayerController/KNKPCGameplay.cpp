@@ -38,6 +38,7 @@ void AKNKPCGameplay::SetupInputComponent()
 	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Started, this, &AKNKPCGameplay::CrouchHold);
 	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Triggered, this, &AKNKPCGameplay::CrouchRelease);
 	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Canceled, this, &AKNKPCGameplay::CrouchRelease);
+	EnhancedInputComponent->BindAction(InputActionJump, ETriggerEvent::Triggered, this, &AKNKPCGameplay::Jump);
 }
 
 void AKNKPCGameplay::Move(const FInputActionValue& Value)
@@ -281,6 +282,15 @@ void AKNKPCGameplay::CrouchRelease()
 			break;
 		}
 	}
+}
+
+void AKNKPCGameplay::Jump()
+{
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallPeeking) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_TakingCover) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Crouching) return;
+
+	PlayerCharacter->Jump();
 }
 
 void AKNKPCGameplay::HandleWallHugWalkStopAnimStarted()

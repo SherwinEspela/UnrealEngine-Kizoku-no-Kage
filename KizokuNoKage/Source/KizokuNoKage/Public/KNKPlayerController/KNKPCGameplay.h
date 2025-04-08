@@ -65,6 +65,7 @@ protected:
 	//void ToggleCrouch();
 	void CrouchHold();
 	void CrouchRelease();
+	void Jump();
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Player Character")
@@ -98,6 +99,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
 	UInputAction* InputActionCrouchPress;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
+	UInputAction* InputActionJump;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wall Hug Speed")

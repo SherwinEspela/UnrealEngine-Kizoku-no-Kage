@@ -8,8 +8,9 @@
 #include "Enums/EnumStances.h"
 #include "KNKAnimInstancePlayer.generated.h"
 
-class AKNKCPlayerKosuke;
+class AKNKPlayer;
 class UAnimMontage;
+class UCharacterMovementComponent;
 
 /**
  * 
@@ -21,6 +22,7 @@ class KIZOKUNOKAGE_API UKNKAnimInstancePlayer : public UKNKAnimInstanceBase
 	
 public:
 	virtual void NativeInitializeAnimation() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 public:
 	// Play Animations
@@ -39,13 +41,19 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Player Character")
-	TObjectPtr<AKNKCPlayerKosuke> PlayerCharacter;
+	AKNKPlayer* PlayerCharacter;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Player Movement States")
 	EPlayerMovementStates PlayerMovementState;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Player Movement States")
 	ECharacterStances PlayerStance = ECharacterStances::ECS_Stand;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement Speed 2D")
+	float MovementSpeed2D = 0.f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Player Character")
+	UCharacterMovementComponent* CharacterMovementComp;
 
 protected:
 	// Montages
@@ -54,4 +62,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = Montage)
 	UAnimMontage* MontageTakeCover;
+
+	
 };
