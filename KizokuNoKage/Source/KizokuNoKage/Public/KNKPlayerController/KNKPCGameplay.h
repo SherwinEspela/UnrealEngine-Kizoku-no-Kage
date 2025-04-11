@@ -61,11 +61,12 @@ protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void WallPeek(const FInputActionValue& Value);
+	void Climb(const FInputActionValue& Value);
 	void Restart();
 	//void ToggleCrouch();
 	void CrouchHold();
 	void CrouchRelease();
-	void Jump();
+	//void Jump();
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Player Character")
@@ -93,6 +94,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
 	UInputAction* InputActionWallPeek;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
+	UInputAction* InputActionClimb;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player Input")
 	UInputAction* InputActionCrouch;

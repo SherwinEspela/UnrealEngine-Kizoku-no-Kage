@@ -14,6 +14,7 @@ enum class EPlayerMovementStates : uint8
 	EPMS_UnHuggingWall	UMETA(DisplayName = "UnHugging Wall"),
 	EPMS_UnpeekingWall	UMETA(DisplayName = "Unpeek Wall"),
 	EPMS_Jumping		UMETA(DisplayName = "Jumping"),
+	EPMS_WallJumping	UMETA(DisplayName = "Wall Jumping"),
 	EPMS_Climbing		UMETA(DisplayName = "Climbing"),
 	EPMS_Crouching		UMETA(DisplayName = "Crouching"),
 	EPMS_Default		UMETA(DisplayName = "Default")
