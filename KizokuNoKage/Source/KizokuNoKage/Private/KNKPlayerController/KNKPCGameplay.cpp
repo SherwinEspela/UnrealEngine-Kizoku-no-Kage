@@ -48,6 +48,7 @@ void AKNKPCGameplay::Move(const FInputActionValue& Value)
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_TakingCover) return;
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Climbing) return;
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallJumping) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_ClimbingUp) return;
 
 	if (bIsCrouchTransitioning) return;
 
@@ -143,6 +144,7 @@ void AKNKPCGameplay::WallPeek(const FInputActionValue& Value)
 void AKNKPCGameplay::Climb(const FInputActionValue& Value)
 {
 	if (PlayerCharacter->GetPlayerMovementState() != EPlayerMovementStates::EPMS_Climbing) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_ClimbingUp) return;
 
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -151,8 +153,6 @@ void AKNKPCGameplay::Climb(const FInputActionValue& Value)
 
 	float MovementX = MovementVector.X;
 	float MovementY = MovementVector.Y;
-
-	//const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 	PlayerCharacter->AddMovementInput(PlayerCharacter->GetActorRightVector(), MovementX);
 }
