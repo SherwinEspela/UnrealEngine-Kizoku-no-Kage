@@ -71,4 +71,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Arrow Wall Detector")
 	TObjectPtr<UArrowComponent> ArrowWallDetectorRight;
+
+protected:
+	UPROPERTY(BlueprintReadWrite, Category = "Can Stealth Attack")
+	bool bCanStealthAttack = false;
 };

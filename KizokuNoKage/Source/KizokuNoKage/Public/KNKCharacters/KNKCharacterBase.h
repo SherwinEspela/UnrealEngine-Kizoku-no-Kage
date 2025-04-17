@@ -13,11 +13,16 @@ class KIZOKUNOKAGE_API AKNKCharacterBase : public ACharacter
 
 public:
 	AKNKCharacterBase();
+	virtual void Tick(float DeltaTime) override;
 
 protected:
 	virtual void BeginPlay() override;
 
-public:	
-	virtual void Tick(float DeltaTime) override;
+public:
+	UFUNCTION(BlueprintCallable)
+	void SetDead();
 
+protected:
+	UPROPERTY(BlueprintReadWrite, Category = "Is Dead")
+	bool bIsDead = false;
 };

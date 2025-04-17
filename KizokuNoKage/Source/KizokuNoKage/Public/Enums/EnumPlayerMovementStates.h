@@ -18,6 +18,7 @@ enum class EPlayerMovementStates : uint8
 	EPMS_Climbing		UMETA(DisplayName = "Climbing"),
 	EPMS_ClimbingUp		UMETA(DisplayName = "Climbing Up"),
 	EPMS_Crouching		UMETA(DisplayName = "Crouching"),
+	EPMS_StealthAttacking		UMETA(DisplayName = "Stealth Attacking"),
 	EPMS_Default		UMETA(DisplayName = "Default")
 };
 

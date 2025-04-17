@@ -2,6 +2,7 @@
 
 
 #include "KNKCharacters/KNKCharacterBase.h"
+#include "Components/CapsuleComponent.h"
 
 AKNKCharacterBase::AKNKCharacterBase()
 {
@@ -13,6 +14,13 @@ void AKNKCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	bIsDead = false;
+}
+
+void AKNKCharacterBase::SetDead()
+{
+	bIsDead = true;
+	GetCapsuleComponent()->SetActive(false);
 }
 
 void AKNKCharacterBase::Tick(float DeltaTime)

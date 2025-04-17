@@ -49,6 +49,7 @@ void AKNKPCGameplay::Move(const FInputActionValue& Value)
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Climbing) return;
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallJumping) return;
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_ClimbingUp) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_StealthAttacking) return;
 
 	if (bIsCrouchTransitioning) return;
 
@@ -81,6 +82,7 @@ void AKNKPCGameplay::Move(const FInputActionValue& Value)
 void AKNKPCGameplay::Look(const FInputActionValue& Value)
 {
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_UnHuggingWall) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_StealthAttacking) return;
 
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 	PlayerCharacter->AddControllerYawInput(LookAxisVector.X);
@@ -145,6 +147,7 @@ void AKNKPCGameplay::Climb(const FInputActionValue& Value)
 {
 	if (PlayerCharacter->GetPlayerMovementState() != EPlayerMovementStates::EPMS_Climbing) return;
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_ClimbingUp) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_StealthAttacking) return;
 
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
@@ -229,6 +232,8 @@ void AKNKPCGameplay::Restart()
 void AKNKPCGameplay::CrouchHold()
 {
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Climbing) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_StealthAttacking) return;
 
 	if (bIsCrouchTransitioning) return;
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Idling)
@@ -350,3 +355,11 @@ void AKNKPCGameplay::HandleAdjustTakeCoverPosition(bool IsLeftSideWall)
 	bIsWallRightEdgeReached = !IsLeftSideWall;
 	bIsWallLeftEdgeReached = IsLeftSideWall;
 }
+
+// TODO: use this for setting the camera pitch limits
+//void ASTPlayerCharacter::SetLimitsToCameraPitch()
+//{
+//	APlayerCameraManager* PlayerCameraManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
+//	PlayerCameraManager->ViewPitchMin = ViewPitchMin;
+//	PlayerCameraManager->ViewPitchMax = ViewPitchMax;
+//}
