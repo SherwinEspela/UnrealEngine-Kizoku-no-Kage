@@ -49,11 +49,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Player Movement States")
 	ECharacterStances PlayerStance = ECharacterStances::ECS_Stand;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Movement Speed 2D")
-	float MovementSpeed2D = 0.f;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Player Character")
-	UCharacterMovementComponent* CharacterMovementComp;
+	/*UPROPERTY(BlueprintReadOnly, Category = "Player Character")
+	UCharacterMovementComponent* CharacterMovementComp;*/
 
 protected:
 	// Montages

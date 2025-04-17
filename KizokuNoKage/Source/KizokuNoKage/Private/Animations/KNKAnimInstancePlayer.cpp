@@ -15,22 +15,20 @@ void UKNKAnimInstancePlayer::NativeInitializeAnimation()
 	PlayerStance = ECharacterStances::ECS_Stand;
 	PlayerMovementState = EPlayerMovementStates::EPMS_Idling;
 
-	UE_LOG(LogTemp, Warning, TEXT("UKNKAnimInstancePlayer::NativeInitializeAnimation...."));
-
-	if (PlayerCharacter)
+	/*if (PlayerCharacter)
 	{
 		CharacterMovementComp = PlayerCharacter->GetCharacterMovement();
-	}
+	}*/
 }
 
 void UKNKAnimInstancePlayer::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if (CharacterMovementComp)
+	/*if (CharacterMovementComp)
 	{
 		MovementSpeed2D = UKismetMathLibrary::VSizeXY(CharacterMovementComp->Velocity);
-	}
+	}*/
 }
 
 void UKNKAnimInstancePlayer::PlayIdleStandToCrouchAnimation()
