@@ -20,7 +20,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetDead();
+	virtual void SetDead();
 
 protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Is Dead")
