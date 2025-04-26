@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Enums/EWeaponStates.h"
 #include "KNKCharacterBase.generated.h"
 
 UCLASS()
@@ -25,4 +26,7 @@ public:
 protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Is Dead")
 	bool bIsDead = false;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Weapon State")
+	EWeaponStates WeaponState;
 };
