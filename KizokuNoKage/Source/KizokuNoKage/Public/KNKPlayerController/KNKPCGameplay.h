@@ -75,7 +75,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Player Anim Instance")
 	TObjectPtr<UKNKAnimInstancePlayer> PlayerAnimInstance;
 
-	UPROPERTY(BlueprintReadOnly, Category = Movement)
+	UPROPERTY(BlueprintReadWrite, Category = Movement)
 	UCharacterMovementComponent* MovementComponent;
 
 protected:

@@ -15,7 +15,7 @@ AKNKPlayer::AKNKPlayer()
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f;
+	CameraBoom->TargetArmLength = 350.0f;
 	CameraBoom->bUsePawnControlRotation = true;
 	CameraBoom->bInheritPitch = true;
 	CameraBoom->bInheritYaw = true;
