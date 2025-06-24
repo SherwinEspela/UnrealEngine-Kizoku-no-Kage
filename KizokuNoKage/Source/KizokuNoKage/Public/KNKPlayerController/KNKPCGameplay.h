@@ -123,11 +123,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wall Edge")
 	bool bIsWallRightEdgeReached = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Max Run Speed")
-	float MaxRunSpeed = 500.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Max Run Speed")
+	float MaxRunSpeed = 450.f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Max Run Speed")
-	float MaxCrouchSpeed = 100.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Max Run Speed")
+	float MaxCrouchSpeed = 220.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Max Run Speed")
 	float MaxWallHugWalkSpeed = 200.f;
