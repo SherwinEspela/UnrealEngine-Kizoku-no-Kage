@@ -4,9 +4,11 @@
 UENUM(BlueprintType)
 enum class ECharacterStances : uint8
 {
-	ECS_Stand		UMETA(DisplayName = "Stand"),
-	ECS_Crouch		UMETA(DisplayName = "Crouch"),
-	ECS_Crawl		UMETA(DisplayName = "Crawl")
+	ECS_Stand			UMETA(DisplayName = "Stand"),
+	ECS_Crouch			UMETA(DisplayName = "Crouch"),
+	ECS_StandToCrouch	UMETA(DisplayName = "Stand to Crouch"),
+	ECS_CrouchToStand	UMETA(DisplayName = "Crouch to Stand"),
+	ECS_Crawl			UMETA(DisplayName = "Crawl")
 };
 
 FORCEINLINE void PrintCharacterStance(ECharacterStances Value) {

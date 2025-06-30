@@ -35,9 +35,10 @@ void AKNKPCGameplay::SetupInputComponent()
 	EnhancedInputComponent->BindAction(InputActionLook, ETriggerEvent::Triggered, this, &AKNKPCGameplay::Look);
 	EnhancedInputComponent->BindAction(InputActionRestart, ETriggerEvent::Triggered, this, &AKNKPCGameplay::Restart);
 	EnhancedInputComponent->BindAction(InputActionWallPeek, ETriggerEvent::Triggered, this, &AKNKPCGameplay::WallPeek);
-	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Started, this, &AKNKPCGameplay::CrouchHold);
+	EnhancedInputComponent->BindAction(InputActionCrouch, ETriggerEvent::Triggered, this, &AKNKPCGameplay::ToggleCrouch);
+	/*EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Started, this, &AKNKPCGameplay::CrouchHold);
 	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Triggered, this, &AKNKPCGameplay::CrouchRelease);
-	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Canceled, this, &AKNKPCGameplay::CrouchRelease);
+	EnhancedInputComponent->BindAction(InputActionCrouchPress, ETriggerEvent::Canceled, this, &AKNKPCGameplay::CrouchRelease);*/
 	//EnhancedInputComponent->BindAction(InputActionJump, ETriggerEvent::Triggered, this, &AKNKPCGameplay::Jump);
 	EnhancedInputComponent->BindAction(InputActionClimb, ETriggerEvent::Triggered, this, &AKNKPCGameplay::Climb);
 }
@@ -165,6 +166,58 @@ void AKNKPCGameplay::Restart()
 	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
 }
 
+void AKNKPCGameplay::ToggleCrouch()
+{
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Climbing) return;
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_StealthAttacking) return;
+
+	switch (PlayerAnimInstance->GetPlayerStance())
+	{
+	case ECharacterStances::ECS_Stand:
+		MovementComponent->MaxWalkSpeed = MaxCrouchSpeed;
+		MovementComponent->MinAnalogWalkSpeed = MaxCrouchSpeed;
+		break;
+	case ECharacterStances::ECS_Crouch:
+		MovementComponent->MaxWalkSpeed = MaxRunSpeed;
+		MovementComponent->MinAnalogWalkSpeed = MaxRunSpeed;
+		break;
+	default:
+		break;
+	}
+
+	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Moving) {
+		switch (PlayerAnimInstance->GetPlayerStance())
+		{
+		case ECharacterStances::ECS_Stand:
+			PlayerAnimInstance->SetPlayerStance(ECharacterStances::ECS_Crouch);
+			break;
+		case ECharacterStances::ECS_Crouch:
+			PlayerAnimInstance->SetPlayerStance(ECharacterStances::ECS_Stand);
+			break;
+		default:
+			break;
+		}
+
+		return;
+	}
+
+	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_StandToCrouch) return;
+	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_CrouchToStand) return;
+
+	switch (PlayerAnimInstance->GetPlayerStance())
+	{
+	case ECharacterStances::ECS_Stand:
+		PlayerAnimInstance->SetPlayerStance(ECharacterStances::ECS_StandToCrouch);
+		break;
+	case ECharacterStances::ECS_Crouch:
+		PlayerAnimInstance->SetPlayerStance(ECharacterStances::ECS_CrouchToStand);
+		break;
+	default:
+		break;
+	}
+}
+
 //void AKNKPCGameplay::ToggleCrouch()
 //{
 //	if (bIsCrouchTransitioning) return;
@@ -235,38 +288,48 @@ void AKNKPCGameplay::CrouchHold()
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Climbing) return;
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_StealthAttacking) return;
 
-	if (bIsCrouchTransitioning) return;
-	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Idling)
-	{
-		bIsCrouchTransitioning = true;
-	}
+	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_Crouch) return;
+	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_StandToCrouch) return;
+	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_CrouchToStand) return;
+
+	//if (bIsCrouchTransitioning) return;
+	//if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Idling)
+	//{
+	//	bIsCrouchTransitioning = true;
+	//	PlayerCharacter->SetPlayerMovementState(EPlayerMovementStates::EPMS_StandingToCrouching);
+	//}
 
 	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_Stand)
 	{
-		PlayerAnimInstance->SetPlayerStance(ECharacterStances::ECS_Crouch);
+		PlayerAnimInstance->SetPlayerStance(ECharacterStances::ECS_StandToCrouch);
+		MovementComponent->MaxWalkSpeed = MaxCrouchSpeed;
+		MovementComponent->MinAnalogWalkSpeed = MaxCrouchSpeed;
 
-		switch (PlayerCharacter->GetPlayerMovementState())
-		{
-		case EPlayerMovementStates::EPMS_Idling:
-			PlayerAnimInstance->PlayIdleStandToCrouchAnimation();
-			MovementComponent->MaxWalkSpeed = MaxCrouchSpeed;
-			MovementComponent->MinAnalogWalkSpeed = MaxCrouchSpeed;
-			break;
+		//switch (PlayerCharacter->GetPlayerMovementState())
+		//{
+		//case EPlayerMovementStates::EPMS_Idling:
+		//	//PlayerAnimInstance->PlayIdleStandToCrouchAnimation();
+		//	MovementComponent->MaxWalkSpeed = MaxCrouchSpeed;
+		//	MovementComponent->MinAnalogWalkSpeed = MaxCrouchSpeed;
+		//	break;
 
-		case EPlayerMovementStates::EPMS_Moving:
-			MovementComponent->MaxWalkSpeed = MaxCrouchSpeed;
-			MovementComponent->MinAnalogWalkSpeed = MaxCrouchSpeed;
-			break;
+		//case EPlayerMovementStates::EPMS_Moving:
+		//	MovementComponent->MaxWalkSpeed = MaxCrouchSpeed;
+		//	MovementComponent->MinAnalogWalkSpeed = MaxCrouchSpeed;
+		//	break;
 
-		default:
-			break;
-		}
+		//default:
+		//	break;
+		//}
 	}
 }
 
 void AKNKPCGameplay::CrouchRelease()
 {	
-	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("AKNKPCGameplay::CrouchRelease...."));
+	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_Stand) return;
+	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_StandToCrouch) return;
+	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_CrouchToStand) return;
+
 	bIsWallRightEdgeReached = false;
 	bIsWallLeftEdgeReached = false;
 
@@ -281,16 +344,20 @@ void AKNKPCGameplay::CrouchRelease()
 	}
 
 	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_WallHugging) return;
-	if (bIsCrouchTransitioning) return;
-	if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Idling)
+	//if (bIsCrouchTransitioning) return;
+	/*if (PlayerCharacter->GetPlayerMovementState() == EPlayerMovementStates::EPMS_Idling)
 	{
 		bIsCrouchTransitioning = true;
-	}
+	}*/
 
 	if (PlayerAnimInstance->GetPlayerStance() == ECharacterStances::ECS_Crouch) {
-		PlayerAnimInstance->SetPlayerStance(ECharacterStances::ECS_Stand);
+		//PlayerAnimInstance->SetPlayerStance(ECharacterStances::ECS_Stand);
 
-		switch (PlayerCharacter->GetPlayerMovementState())
+		PlayerAnimInstance->SetPlayerStance(ECharacterStances::ECS_CrouchToStand);
+		MovementComponent->MaxWalkSpeed = MaxRunSpeed;
+		MovementComponent->MinAnalogWalkSpeed = MaxRunSpeed;
+
+		/*switch (PlayerCharacter->GetPlayerMovementState())
 		{
 		case EPlayerMovementStates::EPMS_Idling:
 			MovementComponent->MaxWalkSpeed = MaxRunSpeed;
@@ -305,7 +372,7 @@ void AKNKPCGameplay::CrouchRelease()
 
 		default:
 			break;
-		}
+		}*/
 	}
 }
 
@@ -346,7 +413,7 @@ void AKNKPCGameplay::HandleWallHugWalkStoppedAtFacing(bool IsFacingLeft)
 
 void AKNKPCGameplay::HandleCrouchTransitionCompleted()
 {
-	bIsCrouchTransitioning = false;
+	//bIsCrouchTransitioning = false;
 }
 
 void AKNKPCGameplay::HandleAdjustTakeCoverPosition(bool IsLeftSideWall)

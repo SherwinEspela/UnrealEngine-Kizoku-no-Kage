@@ -63,7 +63,7 @@ protected:
 	void WallPeek(const FInputActionValue& Value);
 	void Climb(const FInputActionValue& Value);
 	void Restart();
-	//void ToggleCrouch();
+	void ToggleCrouch();
 	void CrouchHold();
 	void CrouchRelease();
 	//void Jump();
