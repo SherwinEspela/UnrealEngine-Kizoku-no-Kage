@@ -20,6 +20,8 @@ void AKNKPCGameplay::BeginPlay()
 	{
 		PlayerAnimInstance = Cast<UKNKAnimInstancePlayer>(PlayerCharacter->GetMesh()->GetAnimInstance());
 		MovementComponent = PlayerCharacter->GetCharacterMovement();
+		MovementComponent->MaxWalkSpeed = MaxRunSpeed;
+		MovementComponent->MinAnalogWalkSpeed = MaxRunSpeed;
 	}
 	
 	UEnhancedInputLocalPlayerSubsystem* PlayerSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
