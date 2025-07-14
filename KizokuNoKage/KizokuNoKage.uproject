@@ -53,6 +53,18 @@
 			"Name": "MeshMorpher",
 			"Enabled": false,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/5ff1652829e74a1e983fff0c9d7d5c66"
+		},
+		{
+			"Name": "ActorPalette",
+			"Enabled": true
+		},
+		{
+			"Name": "Water",
+			"Enabled": true
+		},
+		{
+			"Name": "WaterExtras",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
