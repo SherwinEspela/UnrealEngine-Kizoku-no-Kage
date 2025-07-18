@@ -69,6 +69,10 @@
 		{
 			"Name": "NiagaraFluids",
 			"Enabled": true
+		},
+		{
+			"Name": "WaterAdvanced",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
